@@ -1,0 +1,97 @@
+class Aluno:
+    def __init__(self, nome):
+        self.nome = nome
+        self.notas = []
+        self.frequencia = 0
+
+    def adicionar_notas(self, notas):
+        if len(notas) > 4:
+            print("Só é permitido adicionar no máximo 4 notas.")
+        else:
+            self.notas = notas
+
+    def adicionar_frequencia(self, frequencia):
+        self.frequencia = frequencia
+
+    def calcular_media(self):
+        if len(self.notas) > 0:
+            return sum(self.notas) / len(self.notas)
+        return 0
+
+    def situacao(self, carga_horaria):
+        frequencia_perc = (self.frequencia / carga_horaria) * 100
+        if frequencia_perc < 75:
+            return "Reprovado por Falta"
+        elif self.calcular_media() >= 7:
+            return "Aprovado"
+        else:
+            return "Reprovado por Nota"
+
+class SistemaAlunos:
+    def __init__(self, carga_horaria):
+        self.alunos = []
+        self.carga_horaria = carga_horaria
+
+    def adicionar_aluno(self, nome):
+        self.alunos.append(Aluno(nome))
+
+    def remover_aluno(self, nome):
+        self.alunos = [aluno for aluno in self.alunos if aluno.nome != nome]
+
+    def editar_nome_aluno(self, nome_atual, novo_nome):
+        for aluno in self.alunos:
+            if aluno.nome == nome_atual:
+                aluno.nome = novo_nome
+                return
+        print("Aluno não encontrado.")
+
+    def adicionar_notas(self, nome, notas):
+        for aluno in self.alunos:
+            if aluno.nome == nome:
+                aluno.adicionar_notas(notas)
+                return
+        print("Aluno não encontrado.")
+
+    def adicionar_frequencia(self, nome, frequencia):
+        for aluno in self.alunos:
+            if aluno.nome == nome:
+                aluno.adicionar_frequencia(frequencia)
+                return
+        print("Aluno não encontrado.")
+
+    def relatorio_geral(self):
+        for i, aluno in enumerate(self.alunos, start=1):
+            print(f"{i}. {aluno.nome} - nota: {aluno.calcular_media():.1f} / frequência: {aluno.frequencia} aulas - ({aluno.situacao(self.carga_horaria)})")
+
+    def relatorio_por_situacao(self, situacao_filtro):
+        for i, aluno in enumerate(self.alunos, start=1):
+            if aluno.situacao(self.carga_horaria) == situacao_filtro:
+                print(f"{i}. {aluno.nome} - nota: {aluno.calcular_media():.1f} / frequência: {aluno.frequencia} aulas - ({aluno.situacao(self.carga_horaria)})")
+
+# Exemplo de uso do sistema:
+carga_horaria = int(input("Informe a carga horária da disciplina: "))
+sistema = SistemaAlunos(carga_horaria)
+
+# Adicionar alguns alunos
+sistema.adicionar_aluno("Rodrigo")
+sistema.adicionar_aluno("Renan")
+sistema.adicionar_aluno("Luiz")
+
+# Adicionar notas e frequências
+sistema.adicionar_notas("Rodrigo", [9.5, 9.3])
+sistema.adicionar_frequencia("Rodrigo", 80)
+
+sistema.adicionar_notas("Renan", [7.0])
+sistema.adicionar_frequencia("Renan", 50)
+
+sistema.adicionar_notas("Luiz", [6.2])
+sistema.adicionar_frequencia("Luiz", 60)
+
+# Gerar relatório geral
+print("\nRelatório Geral:")
+sistema.relatorio_geral()
+
+# Gerar relatório por situação
+situacao = input("\nInforme a situação que deseja filtrar (Aprovado, Reprovado por Falta, Reprovado por Nota): ")
+print(f"\nRelatório de Alunos com situação: {situacao}")
+sistema.relatorio_por_situacao(situacao)
